@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">DriverDistractionApplication</string>
+
+    <!-- App Function Labels -->
+    <string name="function_call">Phone Call</string>
+    <string name="function_message">Messaging</string>
+    <string name="function_video">Video</string>
+    <string name="function_keyboard">Keyboard</string>
+    <string name="function_limit_string_length">String Length Limited</string>
+
+    <!-- UI Texts -->
+    <string name="no_function_blocked">App is driving mode optimized. No function blocked.</string>
+    <string name="safety_mode_active">Safety Mode Active</string>
+    <string name="functions_blocked">The following functions are currently blocked:</string>
+    <string name="status_auto_updated">Status is automatically updated via vehicle UX restrictions.</string>
+
+    <!-- Long informational text -->
+    <string name="info_text_long">This is a very long informational text about vehicle distraction optimization. The Android Automotive OS platform provides comprehensive UX restrictions to ensure safety while driving. Various functions such as telephony, keyboard input, video playback, and messaging features can be dynamically restricted based on the vehicle state. These restrictions are automatically applied by the system and cannot be manually overridden to guarantee maximum safety.</string>
+</resources>
