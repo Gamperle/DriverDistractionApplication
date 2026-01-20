@@ -174,6 +174,127 @@ To add a new language:
 2. Copy `strings.xml` to the new folder
 3. Translate all string values
 
+## Testing
+
+The project includes comprehensive unit and instrumented tests to verify the Car UX Restrictions functionality.
+
+### Test Structure
+
+```
+app/src/
+├── test/                                           # Unit tests (run on JVM)
+│   └── CarUxRestrictionsServiceTest.kt            # Tests for restriction logic
+└── androidTest/                                    # Instrumented tests (run on device/emulator)
+    └── CarUxRestrictionsServiceInstrumentedTest.kt # Integration tests
+```
+
+### Unit Tests
+
+Unit tests verify the core logic without requiring Android framework:
+
+- **Restriction Flag Tests**: Verifies bitwise flag operations and constants
+- **String Truncation Tests**: Tests text truncation logic with various edge cases
+- **Bitmask Validation**: Ensures restriction flags are proper powers of 2
+- **Multiple Flags**: Tests that restrictions can be combined simultaneously
+
+**Run unit tests:**
+```bash
+./gradlew test
+```
+
+Or in Android Studio: Right-click on `CarUxRestrictionsServiceTest.kt` → Run
+
+### Instrumented Tests
+
+Instrumented tests verify app behavior in an Android environment:
+
+- **Activity Launch**: Tests MainActivity initialization
+- **String Resources**: Verifies all UI strings are defined
+- **Permissions**: Checks Car API permissions are declared
+- **Configuration Changes**: Tests activity recreation during state changes
+- **String Truncation**: Validates truncation behavior with actual resources
+
+**Run instrumented tests:**
+```bash
+./gradlew connectedAndroidTest
+```
+
+Or in Android Studio: Right-click on `CarUxRestrictionsServiceInstrumentedTest.kt` → Run
+
+### Sample Test Cases
+
+#### Unit Test Example
+```kotlin
+@Test
+fun testMultipleFlagsDetection() {
+    // Combine multiple flags using bitwise OR
+    val activeRestrictions = 
+        CarUxRestrictions.UX_RESTRICTIONS_NO_DIALPAD or 
+        CarUxRestrictions.UX_RESTRICTIONS_NO_VIDEO or
+        CarUxRestrictions.UX_RESTRICTIONS_LIMIT_STRING_LENGTH
+    
+    // Verify each flag is detected
+    assertTrue((activeRestrictions and CarUxRestrictions.UX_RESTRICTIONS_NO_DIALPAD) != 0)
+    assertTrue((activeRestrictions and CarUxRestrictions.UX_RESTRICTIONS_NO_VIDEO) != 0)
+    assertTrue((activeRestrictions and CarUxRestrictions.UX_RESTRICTIONS_LIMIT_STRING_LENGTH) != 0)
+}
+```
+
+#### Instrumented Test Example
+```kotlin
+@Test
+fun testStringResourcesExist() {
+    val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+    
+    // Test that all required string resources are defined
+    val resources = listOf(
+        R.string.function_call,
+        R.string.safety_mode_active,
+        R.string.functions_blocked
+    )
+    
+    resources.forEach { resId ->
+        val string = appContext.getString(resId)
+        assertNotNull("Resource should exist", string)
+        assertTrue("Resource should not be empty", string.isNotEmpty())
+    }
+}
+```
+
+### Test Coverage
+
+The tests cover:
+- ✅ All UX restriction flag combinations
+- ✅ Bitwise operations for flag detection  
+- ✅ String truncation with various lengths
+- ✅ Edge cases (empty sets, exact lengths, etc.)
+- ✅ String resource validation
+- ✅ Permission declarations
+- ✅ Activity lifecycle management
+- ✅ Configuration change handling
+
+### Running Tests in CI/CD
+
+For continuous integration:
+
+```bash
+# Run all tests
+./gradlew check
+
+# Run only unit tests
+./gradlew testDebugUnitTest
+
+# Run only instrumented tests (requires emulator/device)
+./gradlew connectedDebugAndroidTest
+
+# Generate test reports
+./gradlew testDebugUnitTest --info
+```
+
+Test reports will be generated in:
+- Unit tests: `app/build/reports/tests/testDebugUnitTest/index.html`
+- Instrumented tests: `app/build/reports/androidTests/connected/index.html`
+
 ## Best Practices Implemented
 
 - ✅ **Distraction Optimization**: App declares `distractionOptimized="true"` in manifest
